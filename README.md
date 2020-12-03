@@ -1,4 +1,4 @@
-# Miscallenous-5
+# Miscallaneous-5
 
 ## Problem 1: Find Consecutive Ones(https://leetcode.com/problems/max-consecutive-ones-iii/)
 
