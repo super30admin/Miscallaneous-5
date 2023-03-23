@@ -1,66 +1,71 @@
 /*
-We are given a striong s and an integer k
 
-we need to remove k consecutive elements , and after the remove the left chars joins with right chars, and after joining , if the characters are k , we again remove them
-we will keep on doing it until we canoot do it anymore. return the resulting string after doing this opearion multiple times.
+The question is asking that we have only 0s and 1s in an array, and we are a gvien an integer k , which we can use to flip a zero into 1
 
-Think of it as tetris game, where when a matching block forms a square it dis appear and all the blocks fall down to match with the rest of them and this process re peat
+we need to get the length of  maximum consecutive 1s we can form with/without flipping at most k 0 
 
 Intuition:
-We will use a character stack and an integer stack. 
-Whenever we encounter a characters, we will check if that character already exists on the top of the stack , if so we will pop out the current count from the integer stack and increment by one and push it back
 
-whenever we encounter a character which is not macthing with the top of the stack, we will add the character to the character stack and then push 1 into the integer stack
+This approach is a classic sliding window approach , where we have a start and end pointer. 
+We will keep increasing the end pointer , and if end encounters any 0 , we will decerement the avaialble k at that time.  and keep recording length as long as k>=0
+as soon as our k becomes less than 0 i.e k = -1, now its time to get rid one 0 from the start, so we will keep increasing the start until it gets past one 0 . we then gain a k back which would make our k=0 and we will continue in that pattern
 
-we will keep checking if the top of the integer stack is equal to the k , if so we will remove from integer and character stack
-
-at the end, we will form a string from the characters left in the stack and (reverse them) and return interface
-
-Time : O(n + 2k) where k is the number of characters left after removals
-
-Space : O ( 2n) // for stacks
+Time : O(n)
+Space: O(1)
 
 */
 
 class Solution {
-    public String removeDuplicates(String s, int k) {
+  // O(n)
+    public int longestOnes(int[] nums, int k) {
+
+        int max = 0;
+        int s =0, e=0;
+        int rem = k;
+
+        while(e<nums.length){
+            if(nums[e] == 0){ // if end encountered 0 then decrement the k
+                rem--;
+            }
+            if(rem < 0){
+                if(nums[s] == 0){
+                    rem++;
+                }
+                s++;
+            }
+
+            if(rem>=0){
+            max = Math.max(max, e-s+1); // record the length and save maxw
+            }
+            e++;
+        }
+
+        return max;
         
-        Stack<Character> charStack = new Stack<Character>();
-        Stack<Integer> intStack = new Stack<Integer>();
+    }
+      //Time : O(2n)
+    private int unOptimized(int[] nums, int k){
+                int max = 0;
+        int s =0, e=0;
+        int rem = k;
 
-        for(int i=0;i<s.length();i++){
-            char current = s.charAt(i);
-            // check if the current char equals to the char on the Stack
-            if(!charStack.isEmpty() && charStack.peek() == current){
-                // get the number and increment to it
-                int num = intStack.pop();
-                intStack.push(num+1);
-            }else{
-                charStack.push(current);
-                intStack.push(1);
+        while(e<nums.length){
+            if(nums[e] == 0){ // if end encountered 0 then decrement the k
+                rem--;
             }
+            if(rem < 0){
+                // we gotta get rid of one zero from the start
+                while(nums[s]!=0){ // keep moving s until it encounter 0
+                    s++;
+                }
+                s++; // now get past that 0
+                rem++;// we just got past the k, so we gained another k
 
-            // check if count of any stack is k 
-            if(!intStack.isEmpty() && intStack.peek() == k){
-                // remove the elements
-                intStack.pop();
-                charStack.pop();
             }
+            max = Math.max(max, e-s+1); // record the length and save maxw
+            e++;
         }
 
-        // form a string with the characters left in the stack
-        StringBuilder result = new StringBuilder();
-        while(!charStack.isEmpty()){
-            int num = intStack.pop();
-            char c = charStack.pop();
-
-            int j=0;
-            while(j<num){
-                result.append(c);
-                j++;
-            }
-        }
-
-        return result.reverse().toString();
+        return max;
     }
 }
