@@ -4,6 +4,7 @@ Space: O(1)
 Executed Sucessfully: Yes
 when we encounter a zero, we can move slow pointer till it encounters zero + 1
 */
+small edit ignore
 
 class Solution {
     public int longestOnes(int[] nums, int k) {
